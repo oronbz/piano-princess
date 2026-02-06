@@ -20,7 +20,7 @@ export interface Sticker {
   name: string;
 }
 
-export type TabId = "tasks" | "stickers" | "fun";
+export type TabId = "tasks" | "stickers" | "fun" | "piano";
 
 export type MagicContentType = "challenge" | "story";
 

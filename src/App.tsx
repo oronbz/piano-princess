@@ -11,6 +11,7 @@ import { BottomNav } from "./layout/BottomNav";
 import { TasksPage } from "./pages/TasksPage";
 import { StickersPage } from "./pages/StickersPage";
 import { FunPage } from "./pages/FunPage";
+import { PianoPage } from "./pages/PianoPage";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("tasks");
@@ -22,8 +23,15 @@ export default function App() {
     <div className="min-h-screen bg-pink-50 font-['Heebo',sans-serif] selection:bg-pink-200">
       <Celebration active={game.celebrating} />
 
-      {/* Main Content Container */}
-      <div className="max-w-md mx-auto min-h-screen relative flex flex-col pb-24">
+      {/* Piano is fullscreen — render it above everything when active */}
+      {activeTab === "piano" && <PianoPage />}
+
+      {/* Main Content Container — hidden when piano is active */}
+      <div
+        className={`max-w-md mx-auto min-h-screen relative flex flex-col pb-24 ${
+          activeTab === "piano" ? "invisible" : ""
+        }`}
+      >
         <Header
           stats={game.stats}
           xpProgress={game.xpProgress}

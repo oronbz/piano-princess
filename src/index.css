@@ -19,6 +19,17 @@
   }
 }
 
+@keyframes piano-sparkle {
+  0% {
+    opacity: 1;
+    transform: scale(0.5) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5) translateY(-30px);
+  }
+}
+
 .animate-fall {
   animation-name: fall;
   animation-timing-function: linear;
@@ -27,6 +38,11 @@
 .glass-panel {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
+}
+
+.animate-piano-sparkle {
+  animation: piano-sparkle 0.6s ease-out forwards;
+  pointer-events: none;
 }
 
 .shine {
