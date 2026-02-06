@@ -246,7 +246,7 @@ export function PianoPage() {
         <div
           ref={pianoRef}
           className="relative flex-1 mx-1 my-1 select-none"
-          style={{ touchAction: "none" }}
+          style={{ touchAction: "none", direction: "ltr" }}
         >
           {/* White keys */}
           <div className="flex h-full gap-[2px]">
