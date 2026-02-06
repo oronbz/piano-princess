@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Music, Star, Trophy, Check, Sparkles, Flame, Crown, Lock, Wand2, BookOpen, Smile } from 'lucide-react';
+import { playTaskComplete, playAllTasksComplete, playLevelUp } from './sounds';
 
 /**
  * Piano Princess Quest - Hebrew Version (Offline Magic ✨)
@@ -166,6 +167,7 @@ export default function App() {
     setTasks(newTasks);
     const xpGain = newTasks[taskIndex].xp;
     addXp(xpGain);
+    playTaskComplete();
     triggerCelebration();
     if (newTasks.every(t => t.completed)) completeDay();
   };
@@ -178,6 +180,7 @@ export default function App() {
     if (newXp >= nextLevelThreshold) {
       newLevel++;
       setShowLevelUp(true);
+      playLevelUp();
       newGems += 50;
     }
     setStats(prev => ({
@@ -192,6 +195,7 @@ export default function App() {
   const completeDay = () => {
     setTimeout(() => {
       setStats(prev => ({ ...prev, streak: prev.streak + 1, gems: prev.gems + 20 }));
+      playAllTasksComplete();
       triggerCelebration();
     }, 500);
   };

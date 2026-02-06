@@ -16,6 +16,7 @@ export default defineConfig({
         "icon-512x512.png",
       ],
       manifest: {
+        id: "/",
         name: "נסיכת הפסנתר - Piano Princess Quest",
         short_name: "נסיכת הפסנתר",
         description: "מעקב תרגול פסנתר עם משחקיות",
@@ -27,6 +28,7 @@ export default defineConfig({
         orientation: "portrait",
         start_url: "/",
         scope: "/",
+        prefer_related_applications: false,
         icons: [
           {
             src: "icon-192x192.png",
@@ -48,6 +50,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        navigationPreload: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
