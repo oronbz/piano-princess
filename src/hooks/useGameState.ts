@@ -22,9 +22,46 @@ function freshTasks(): Task[] {
   return DAILY_TASKS_DEFAULT.map((t) => ({ ...t, completed: false }));
 }
 
+function loadInitialStats(): Stats {
+  const savedStats = localStorage.getItem(STATS_KEY);
+  if (!savedStats) return DEFAULT_STATS;
+
+  const parsedStats: Stats = JSON.parse(savedStats);
+  const today = new Date().toDateString();
+  const lastPlayed = parsedStats.lastPlayed;
+  let newStreak = parsedStats.streak;
+
+  if (lastPlayed !== today && lastPlayed) {
+    const d1 = new Date(lastPlayed);
+    const d2 = new Date();
+    const diffTime = Math.abs(d2.getTime() - d1.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 1) newStreak = 0;
+  }
+
+  return { ...parsedStats, streak: newStreak };
+}
+
+function loadInitialTasks(): Task[] {
+  const savedStats = localStorage.getItem(STATS_KEY);
+  const savedTasks = localStorage.getItem(TASKS_KEY);
+
+  if (!savedStats) return freshTasks();
+
+  const parsedStats: Stats = JSON.parse(savedStats);
+  const today = new Date().toDateString();
+
+  // If it's a new day, reset tasks
+  if (parsedStats.lastPlayed !== today) {
+    return freshTasks();
+  }
+
+  return savedTasks ? JSON.parse(savedTasks) : freshTasks();
+}
+
 export function useGameState() {
-  const [tasks, setTasks] = useState<Task[]>(freshTasks);
-  const [stats, setStats] = useState<Stats>(DEFAULT_STATS);
+  const [tasks, setTasks] = useState<Task[]>(() => loadInitialTasks());
+  const [stats, setStats] = useState<Stats>(() => loadInitialStats());
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
 
@@ -37,35 +74,6 @@ export function useGameState() {
 
   // Guard against StrictMode double-invocation
   const processingRef = useRef(false);
-
-  // --- Load from localStorage on mount ---
-  useEffect(() => {
-    const savedStats = localStorage.getItem(STATS_KEY);
-    const savedTasks = localStorage.getItem(TASKS_KEY);
-
-    if (savedStats) {
-      const parsedStats: Stats = JSON.parse(savedStats);
-      const today = new Date().toDateString();
-      const lastPlayed = parsedStats.lastPlayed;
-      let newStreak = parsedStats.streak;
-      let newTasks: Task[] = savedTasks
-        ? JSON.parse(savedTasks)
-        : freshTasks();
-
-      if (lastPlayed !== today) {
-        newTasks = freshTasks();
-        if (lastPlayed) {
-          const d1 = new Date(lastPlayed);
-          const d2 = new Date();
-          const diffTime = Math.abs(d2.getTime() - d1.getTime());
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays > 1) newStreak = 0;
-        }
-      }
-      setStats({ ...parsedStats, streak: newStreak });
-      setTasks(newTasks);
-    }
-  }, []);
 
   // --- Persist to localStorage ---
   useEffect(() => {
