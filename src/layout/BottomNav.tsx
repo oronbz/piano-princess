@@ -1,4 +1,4 @@
-import { Music, Wand2, Trophy, Piano } from "lucide-react";
+import { Music, Wand2, Trophy, Piano, Settings } from "lucide-react";
 import type { TabId } from "../types";
 
 interface BottomNavProps {
@@ -67,6 +67,21 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           className={activeTab === "stickers" ? "fill-current" : ""}
         />
         <span className="text-[10px] font-bold mt-1">פרסים</span>
+      </button>
+
+      <button
+        onClick={() => onTabChange("settings")}
+        className={`flex flex-col items-center p-2 rounded-2xl transition-all ${
+          activeTab === "settings"
+            ? "text-gray-600 bg-gray-100"
+            : "hover:text-gray-500"
+        }`}
+      >
+        <Settings
+          size={24}
+          className={activeTab === "settings" ? "animate-spin-slow" : ""}
+        />
+        <span className="text-[10px] font-bold mt-1">הגדרות</span>
       </button>
     </div>
   );

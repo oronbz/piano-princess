@@ -6,6 +6,13 @@ export interface Task {
   completed: boolean;
 }
 
+export interface TaskTemplate {
+  id: number;
+  text: string;
+  icon: string;
+  xp: number;
+}
+
 export interface Stats {
   level: number;
   xp: number;
@@ -20,7 +27,7 @@ export interface Sticker {
   name: string;
 }
 
-export type TabId = "tasks" | "stickers" | "fun" | "piano";
+export type TabId = "tasks" | "stickers" | "fun" | "piano" | "settings";
 
 export type MagicContentType = "challenge" | "story";
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { Stats, Task } from "../types";
+import type { Stats, Task, TaskTemplate } from "../types";
 import { DAILY_TASKS_DEFAULT, LEVEL_THRESHOLDS } from "../data/constants";
 import {
   playTaskComplete,
@@ -9,6 +9,7 @@ import {
 
 const STATS_KEY = "piano-princess-stats-he";
 const TASKS_KEY = "piano-princess-tasks-he";
+const TEMPLATES_KEY = "piano-princess-templates-he";
 
 const DEFAULT_STATS: Stats = {
   level: 1,
@@ -18,8 +19,22 @@ const DEFAULT_STATS: Stats = {
   lastPlayed: null,
 };
 
+function loadTemplates(): TaskTemplate[] {
+  const saved = localStorage.getItem(TEMPLATES_KEY);
+  if (saved) {
+    const parsed: TaskTemplate[] = JSON.parse(saved);
+    if (parsed.length > 0) return parsed;
+  }
+  return DAILY_TASKS_DEFAULT.map(({ id, text, icon, xp }) => ({
+    id,
+    text,
+    icon,
+    xp,
+  }));
+}
+
 function freshTasks(): Task[] {
-  return DAILY_TASKS_DEFAULT.map((t) => ({ ...t, completed: false }));
+  return loadTemplates().map((t) => ({ ...t, completed: false }));
 }
 
 function loadInitialStats(): Stats {
@@ -65,6 +80,9 @@ function loadInitialTasks(): Task[] {
 export function useGameState() {
   const [tasks, setTasks] = useState<Task[]>(() => loadInitialTasks());
   const [stats, setStats] = useState<Stats>(() => loadInitialStats());
+  const [taskTemplates, setTaskTemplates] = useState<TaskTemplate[]>(
+    () => loadTemplates(),
+  );
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
 
@@ -83,6 +101,10 @@ export function useGameState() {
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
     localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
   }, [stats, tasks]);
+
+  useEffect(() => {
+    localStorage.setItem(TEMPLATES_KEY, JSON.stringify(taskTemplates));
+  }, [taskTemplates]);
 
   // --- Celebration ---
   const triggerCelebration = useCallback(() => {
@@ -227,6 +249,30 @@ export function useGameState() {
       (currentLevelThreshold - prevLevelThreshold)) *
     100;
 
+  // --- Task template CRUD ---
+  const addTaskTemplate = useCallback(
+    (template: Omit<TaskTemplate, "id">) => {
+      setTaskTemplates((prev) => {
+        const maxId = prev.reduce((max, t) => Math.max(max, t.id), 0);
+        return [...prev, { ...template, id: maxId + 1 }];
+      });
+    },
+    [],
+  );
+
+  const updateTaskTemplate = useCallback(
+    (id: number, updates: Partial<Omit<TaskTemplate, "id">>) => {
+      setTaskTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+      );
+    },
+    [],
+  );
+
+  const deleteTaskTemplate = useCallback((id: number) => {
+    setTaskTemplates((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
   return {
     tasks,
     stats,
@@ -237,5 +283,9 @@ export function useGameState() {
     handleTaskUndo,
     xpProgress,
     currentLevelThreshold,
+    taskTemplates,
+    addTaskTemplate,
+    updateTaskTemplate,
+    deleteTaskTemplate,
   } as const;
 }

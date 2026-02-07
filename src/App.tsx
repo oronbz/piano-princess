@@ -12,6 +12,7 @@ import { TasksPage } from "./pages/TasksPage";
 import { StickersPage } from "./pages/StickersPage";
 import { FunPage } from "./pages/FunPage";
 import { PianoPage } from "./pages/PianoPage";
+import { SettingsPage } from "./pages/SettingsPage";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("tasks");
@@ -51,6 +52,14 @@ export default function App() {
           )}
           {activeTab === "stickers" && <StickersPage stats={game.stats} />}
           {activeTab === "fun" && <FunPage onGenerate={magic.generate} />}
+          {activeTab === "settings" && (
+            <SettingsPage
+              templates={game.taskTemplates}
+              onAdd={game.addTaskTemplate}
+              onUpdate={game.updateTaskTemplate}
+              onDelete={game.deleteTaskTemplate}
+            />
+          )}
         </div>
       </div>
 
