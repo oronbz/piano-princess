@@ -23,7 +23,7 @@ export function FunPage({ onGenerate }: FunPageProps) {
         <div className="grid grid-cols-1 gap-3">
           <button
             onClick={() => onGenerate("challenge")}
-            className="bg-white/20 backdrop-blur-md border border-white/40 hover:bg-white/30 transition-all rounded-xl p-4 flex items-center space-x-4 rtl:space-x-reverse"
+            className="bg-white/20 backdrop-blur-md border border-white/40 hover:bg-white/30 transition-all rounded-xl p-4 flex items-center gap-3"
           >
             <div className="bg-yellow-400 rounded-full p-2">
               <Smile className="text-white" size={20} />
@@ -36,7 +36,7 @@ export function FunPage({ onGenerate }: FunPageProps) {
 
           <button
             onClick={() => onGenerate("story")}
-            className="bg-white/20 backdrop-blur-md border border-white/40 hover:bg-white/30 transition-all rounded-xl p-4 flex items-center space-x-4 rtl:space-x-reverse"
+            className="bg-white/20 backdrop-blur-md border border-white/40 hover:bg-white/30 transition-all rounded-xl p-4 flex items-center gap-3"
           >
             <div className="bg-pink-400 rounded-full p-2">
               <BookOpen className="text-white" size={20} />
