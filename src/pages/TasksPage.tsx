@@ -77,8 +77,8 @@ export function TasksPage({ tasks, onTaskComplete }: TasksPageProps) {
               fill="currentColor"
             />
           </div>
-          <h3 className="text-2xl font-black mb-1">!כל הכבוד</h3>
-          <p className="opacity-90 font-medium">!את כוכבת פסנתר אמיתית</p>
+          <h3 className="text-2xl font-black mb-1">כל הכבוד!</h3>
+          <p className="opacity-90 font-medium">את כוכבת פסנתר אמיתית!</p>
         </div>
       )}
     </div>
