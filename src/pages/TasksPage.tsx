@@ -5,9 +5,10 @@ import type { Task } from "../types";
 interface TasksPageProps {
   tasks: Task[];
   onTaskComplete: (taskId: number) => void;
+  onTaskUndo: (taskId: number) => void;
 }
 
-export function TasksPage({ tasks, onTaskComplete }: TasksPageProps) {
+export function TasksPage({ tasks, onTaskComplete, onTaskUndo }: TasksPageProps) {
   const allDone = tasks.every((t) => t.completed);
   const prevAllDone = useRef(allDone);
   const [showBounce, setShowBounce] = useState(false);
@@ -30,12 +31,13 @@ export function TasksPage({ tasks, onTaskComplete }: TasksPageProps) {
       {tasks.map((task) => (
         <button
           key={task.id}
-          onClick={() => onTaskComplete(task.id)}
-          disabled={task.completed}
+          onClick={() =>
+            task.completed ? onTaskUndo(task.id) : onTaskComplete(task.id)
+          }
           className={`w-full group relative overflow-hidden transition-all duration-300 transform 
             ${
               task.completed
-                ? "bg-green-50 border-green-100 scale-[0.98] opacity-80"
+                ? "bg-green-50 border-green-100 scale-[0.98] opacity-80 hover:opacity-100 hover:border-orange-200"
                 : "bg-white hover:scale-[1.02] shadow-lg shadow-pink-100/50 border-2 border-transparent hover:border-pink-200"
             } rounded-3xl p-4 flex items-center text-right`}
         >

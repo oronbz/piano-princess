@@ -164,6 +164,61 @@ export function useGameState() {
     [triggerCelebration],
   );
 
+  // --- Undo a completed task ---
+  const handleTaskUndo = useCallback((taskId: number) => {
+    // Prevent double-execution from StrictMode
+    if (processingRef.current) return;
+    processingRef.current = true;
+    queueMicrotask(() => {
+      processingRef.current = false;
+    });
+
+    const currentTasks = tasksRef.current;
+    const currentStats = statsRef.current;
+
+    const taskIndex = currentTasks.findIndex((t) => t.id === taskId);
+    if (taskIndex === -1 || !currentTasks[taskIndex].completed) return;
+
+    const wereAllDone = currentTasks.every((t) => t.completed);
+
+    // --- Compute new tasks ---
+    const newTasks = currentTasks.map((t) =>
+      t.id === taskId ? { ...t, completed: false } : t,
+    );
+
+    // --- Reverse stats ---
+    const xpLoss = currentTasks[taskIndex].xp;
+    let newXp = currentStats.xp - xpLoss;
+    let newLevel = currentStats.level;
+    let newGems = currentStats.gems - xpLoss / 5;
+
+    // Reverse all-done bonus if tasks were all completed before undo
+    if (wereAllDone) {
+      newGems -= 20;
+    }
+
+    // Reverse level-up if XP drops below the threshold for the current level
+    const currentLevelMin = LEVEL_THRESHOLDS[newLevel - 1];
+    if (currentLevelMin !== undefined && newXp < currentLevelMin) {
+      newLevel--;
+      newGems -= 50;
+    }
+
+    const newStats: Stats = {
+      ...currentStats,
+      xp: Math.max(0, newXp),
+      level: Math.max(1, newLevel),
+      gems: Math.max(0, Math.floor(newGems)),
+      // Reverse streak bump if tasks were all done before undo
+      streak: wereAllDone
+        ? Math.max(0, currentStats.streak - 1)
+        : currentStats.streak,
+    };
+
+    setTasks(newTasks);
+    setStats(newStats);
+  }, []);
+
   // --- Derived values ---
   const currentLevelThreshold = LEVEL_THRESHOLDS[stats.level] ?? 10000;
   const prevLevelThreshold = LEVEL_THRESHOLDS[stats.level - 1] ?? 0;
@@ -179,6 +234,7 @@ export function useGameState() {
     setShowLevelUp,
     celebrating,
     handleTaskComplete,
+    handleTaskUndo,
     xpProgress,
     currentLevelThreshold,
   } as const;

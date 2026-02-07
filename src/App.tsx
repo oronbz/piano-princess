@@ -46,6 +46,7 @@ export default function App() {
             <TasksPage
               tasks={game.tasks}
               onTaskComplete={game.handleTaskComplete}
+              onTaskUndo={game.handleTaskUndo}
             />
           )}
           {activeTab === "stickers" && <StickersPage stats={game.stats} />}
