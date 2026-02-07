@@ -34,8 +34,11 @@ function loadInitialStats(): Stats {
   if (lastPlayed !== today && lastPlayed) {
     const d1 = new Date(lastPlayed);
     const d2 = new Date();
-    const diffTime = Math.abs(d2.getTime() - d1.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+    const diffDays = Math.round(
+      (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24),
+    );
     if (diffDays > 1) newStreak = 0;
   }
 
