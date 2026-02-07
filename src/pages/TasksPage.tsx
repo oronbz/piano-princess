@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { Star, Trophy, Check } from "lucide-react";
 import type { Task } from "../types";
 
@@ -8,6 +9,17 @@ interface TasksPageProps {
 
 export function TasksPage({ tasks, onTaskComplete }: TasksPageProps) {
   const allDone = tasks.every((t) => t.completed);
+  const prevAllDone = useRef(allDone);
+  const [showBounce, setShowBounce] = useState(false);
+
+  useEffect(() => {
+    if (allDone && !prevAllDone.current) {
+      setShowBounce(true);
+      const timer = setTimeout(() => setShowBounce(false), 3000);
+      return () => clearTimeout(timer);
+    }
+    prevAllDone.current = allDone;
+  }, [allDone]);
 
   return (
     <div className="space-y-4">
@@ -69,7 +81,7 @@ export function TasksPage({ tasks, onTaskComplete }: TasksPageProps) {
       ))}
 
       {allDone && (
-        <div className="mt-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-3xl p-6 text-center text-white shadow-lg shine transform animate-bounce">
+        <div className={`mt-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-3xl p-6 text-center text-white shadow-lg shine transform ${showBounce ? "animate-bounce" : ""}`}>
           <div className="flex justify-center mb-2">
             <Trophy
               size={48}
