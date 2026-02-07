@@ -2,7 +2,20 @@ import { useState } from "react";
 import { Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import type { TaskTemplate } from "../types";
 
-const ICON_OPTIONS = ["🎵", "🎼", "🎹", "🇮🇱", "⭐", "🎶", "🎤", "🎸", "🎻", "💃", "🌟", "🦄"];
+const ICON_OPTIONS = [
+  "🎵",
+  "🎼",
+  "🎹",
+  "🇮🇱",
+  "⭐",
+  "🎶",
+  "🎤",
+  "🎸",
+  "🎻",
+  "💃",
+  "🌟",
+  "🦄",
+];
 
 interface SettingsPageProps {
   templates: TaskTemplate[];
@@ -48,7 +61,7 @@ function TemplateRow({
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowIcons(!showIcons)}
-            className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner flex-shrink-0 hover:bg-pink-200 transition-colors"
+            className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner shrink-0 hover:bg-pink-200 transition-colors"
           >
             {icon}
           </button>
@@ -112,7 +125,7 @@ function TemplateRow({
 
   return (
     <div className="bg-white rounded-3xl p-4 shadow-lg shadow-pink-100/50 border-2 border-transparent flex items-center text-right">
-      <div className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner ml-4 flex-shrink-0">
+      <div className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner ml-4 shrink-0">
         {template.icon}
       </div>
       <div className="flex-1">
@@ -193,7 +206,7 @@ export function SettingsPage({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowIcons(!showIcons)}
-              className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner flex-shrink-0 hover:bg-pink-200 transition-colors"
+              className="h-12 w-12 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl shadow-inner shrink-0 hover:bg-pink-200 transition-colors"
             >
               {newIcon}
             </button>
@@ -259,7 +272,7 @@ export function SettingsPage({
       ) : (
         <button
           onClick={() => setShowAdd(true)}
-          className="w-full bg-gradient-to-l from-pink-400 to-purple-400 text-white rounded-3xl p-4 flex items-center justify-center gap-2 font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full bg-linear-to-l from-pink-400 to-purple-400 text-white rounded-3xl p-4 flex items-center justify-center gap-2 font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <Plus size={24} />
           הוספת משימה

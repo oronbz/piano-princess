@@ -13,7 +13,7 @@ export function StreakCard({ stats }: StreakCardProps) {
           רצף נוכחי
         </span>
         <div className="flex items-baseline space-x-1">
-          <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+          <span className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-red-500">
             {stats.streak}
           </span>
           <span className="text-sm font-bold text-gray-500">ימים</span>

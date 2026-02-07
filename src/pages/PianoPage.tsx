@@ -306,7 +306,7 @@ export function PianoPage() {
   }
 
   return (
-    <div className="fixed inset-0 bottom-[72px] z-30 bg-gradient-to-b from-pink-100 via-pink-50 to-purple-50 flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 bottom-[72px] z-30 bg-linear-to-b from-pink-100 via-pink-50 to-purple-50 flex items-center justify-center overflow-hidden">
       {/* Decorative background sparkles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-4 right-6 text-pink-200/60 animate-pulse">
@@ -362,8 +362,8 @@ export function PianoPage() {
                     relative flex-1 rounded-b-xl border border-pink-100/80 transition-all duration-75
                     ${
                       isPressed
-                        ? "bg-gradient-to-b from-pink-100 to-pink-200 shadow-inner scale-[0.98] border-pink-200"
-                        : "bg-gradient-to-b from-white to-pink-50/60 shadow-md hover:from-pink-50 hover:to-pink-100/40"
+                        ? "bg-linear-to-b from-pink-100 to-pink-200 shadow-inner scale-[0.98] border-pink-200"
+                        : "bg-linear-to-b from-white to-pink-50/60 shadow-md hover:from-pink-50 hover:to-pink-100/40"
                     }
                   `}
                   style={{ touchAction: "none" }}
@@ -377,8 +377,7 @@ export function PianoPage() {
           {BLACK_KEYS.map((key) => {
             const isPressed = pressedKeys.has(key.note);
             const whiteIdx = getBlackKeyWhiteIndex(key.note);
-            const leftPercent =
-              ((whiteIdx + 1) / totalWhiteKeys) * 100;
+            const leftPercent = ((whiteIdx + 1) / totalWhiteKeys) * 100;
             const widthPercent = (1 / totalWhiteKeys) * 70;
 
             return (
@@ -390,8 +389,8 @@ export function PianoPage() {
                   absolute top-0 rounded-b-lg transition-all duration-75 z-10
                   ${
                     isPressed
-                      ? "bg-gradient-to-b from-purple-400 to-purple-600 shadow-inner scale-[0.97]"
-                      : "bg-gradient-to-b from-gray-700 via-gray-800 to-gray-900 shadow-lg hover:from-purple-800 hover:to-purple-950"
+                      ? "bg-linear-to-b from-purple-400 to-purple-600 shadow-inner scale-[0.97]"
+                      : "bg-linear-to-b from-gray-700 via-gray-800 to-gray-900 shadow-lg hover:from-purple-800 hover:to-purple-950"
                   }
                 `}
                 style={{

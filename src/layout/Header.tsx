@@ -7,9 +7,13 @@ interface HeaderProps {
   currentLevelThreshold: number;
 }
 
-export function Header({ stats, xpProgress, currentLevelThreshold }: HeaderProps) {
+export function Header({
+  stats,
+  xpProgress,
+  currentLevelThreshold,
+}: HeaderProps) {
   return (
-    <div className="pt-[max(2rem,env(safe-area-inset-top))] pb-12 px-6 bg-gradient-to-b from-pink-400 to-pink-200 rounded-b-[40px] shadow-lg relative overflow-hidden">
+    <div className="pt-[max(2rem,env(safe-area-inset-top))] pb-12 px-6 bg-linear-to-b from-pink-400 to-pink-200 rounded-b-[40px] shadow-lg relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-10 -mt-10 blur-xl" />
       <div className="absolute top-20 left-10 w-16 h-16 bg-white/10 rounded-full blur-lg" />
 
@@ -38,7 +42,7 @@ export function Header({ stats, xpProgress, currentLevelThreshold }: HeaderProps
         </h1>
         <div className="mt-4 bg-black/20 rounded-full h-6 p-1 relative w-full max-w-[80%] mx-auto">
           <div
-            className="bg-gradient-to-l from-yellow-300 to-yellow-500 h-4 rounded-full transition-all duration-1000 ease-out shadow-sm relative"
+            className="bg-linear-to-l from-yellow-300 to-yellow-500 h-4 rounded-full transition-all duration-1000 ease-out shadow-sm relative"
             style={{ width: `${Math.min(xpProgress, 100)}%` }}
           >
             <div className="absolute left-0 top-0 bottom-0 w-2 bg-white/40 rounded-full animate-pulse" />

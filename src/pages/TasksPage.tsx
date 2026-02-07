@@ -8,7 +8,11 @@ interface TasksPageProps {
   onTaskUndo: (taskId: number) => void;
 }
 
-export function TasksPage({ tasks, onTaskComplete, onTaskUndo }: TasksPageProps) {
+export function TasksPage({
+  tasks,
+  onTaskComplete,
+  onTaskUndo,
+}: TasksPageProps) {
   const allDone = tasks.every((t) => t.completed);
   const prevAllDone = useRef(allDone);
   const [showBounce, setShowBounce] = useState(false);
@@ -43,7 +47,7 @@ export function TasksPage({ tasks, onTaskComplete, onTaskUndo }: TasksPageProps)
         >
           <div
             className={`
-              h-12 w-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ml-4 flex-shrink-0
+              h-12 w-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ml-4 shrink-0
               ${task.completed ? "bg-green-100 grayscale-0" : "bg-pink-100"}
             `}
           >
@@ -83,7 +87,9 @@ export function TasksPage({ tasks, onTaskComplete, onTaskUndo }: TasksPageProps)
       ))}
 
       {allDone && (
-        <div className={`mt-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-3xl p-6 text-center text-white shadow-lg shine transform ${showBounce ? "animate-bounce" : ""}`}>
+        <div
+          className={`mt-8 bg-linear-to-r from-purple-400 to-pink-500 rounded-3xl p-6 text-center text-white shadow-lg shine transform ${showBounce ? "animate-bounce" : ""}`}
+        >
           <div className="flex justify-center mb-2">
             <Trophy
               size={48}
