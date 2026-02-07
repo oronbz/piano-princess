@@ -134,6 +134,11 @@ export function PianoPage() {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const pianoRef = useRef<HTMLDivElement>(null);
 
+  // Track which note each active pointer is currently playing
+  const pointerNoteRef = useRef<Map<number, string>>(new Map());
+  // Ref mirror of pressedKeys so pointer handlers always see latest state
+  const pressedKeysRef = useRef<Set<string>>(new Set());
+
   // Remove sparkles after animation
   useEffect(() => {
     if (sparkles.length === 0) return;
@@ -143,36 +148,127 @@ export function PianoPage() {
     return () => clearTimeout(timeout);
   }, [sparkles]);
 
-  const handleKeyDown = useCallback(
-    (note: string, freq: number, e: React.PointerEvent) => {
-      e.preventDefault();
-      setPressedKeys((prev) => new Set(prev).add(note));
-      startNote(freq, note);
-
-      // Add sparkle at touch position relative to the piano container
-      if (pianoRef.current) {
-        const rect = pianoRef.current.getBoundingClientRect();
-        setSparkles((prev) => [
-          ...prev,
-          {
-            id: ++sparkleId,
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-          },
-        ]);
+  /** Find the piano key element under a screen point */
+  const getKeyAtPoint = useCallback((clientX: number, clientY: number) => {
+    const elements = document.elementsFromPoint(clientX, clientY);
+    for (const el of elements) {
+      const btn = el.closest("[data-note]") as HTMLElement | null;
+      if (btn) {
+        return {
+          note: btn.dataset.note!,
+          freq: Number(btn.dataset.freq!),
+          element: btn,
+        };
       }
+    }
+    return null;
+  }, []);
+
+  /** Add a sparkle at a key element's center */
+  const addSparkleAtKey = useCallback((element: HTMLElement) => {
+    setSparkles((prev) => [
+      ...prev,
+      {
+        id: ++sparkleId,
+        x: element.offsetLeft + element.offsetWidth / 2,
+        y: element.offsetTop + element.offsetHeight / 2,
+      },
+    ]);
+  }, []);
+
+  /** Activate a note for a pointer (press + sound + sparkle) */
+  const activateNote = useCallback(
+    (pointerId: number, note: string, freq: number, element: HTMLElement) => {
+      pointerNoteRef.current.set(pointerId, note);
+      pressedKeysRef.current.add(note);
+      setPressedKeys(new Set(pressedKeysRef.current));
+      startNote(freq, note);
+      addSparkleAtKey(element);
     },
-    [],
+    [addSparkleAtKey],
   );
 
-  const handleKeyUp = useCallback((note: string) => {
-    setPressedKeys((prev) => {
-      const next = new Set(prev);
-      next.delete(note);
-      return next;
-    });
-    stopNote(note);
+  /** Deactivate a note for a pointer */
+  const deactivateNote = useCallback((pointerId: number) => {
+    const note = pointerNoteRef.current.get(pointerId);
+    if (note) {
+      pointerNoteRef.current.delete(pointerId);
+      // Only release the note if no other pointer is playing it
+      let stillHeld = false;
+      pointerNoteRef.current.forEach((n) => {
+        if (n === note) stillHeld = true;
+      });
+      if (!stillHeld) {
+        pressedKeysRef.current.delete(note);
+        setPressedKeys(new Set(pressedKeysRef.current));
+        stopNote(note);
+      }
+    }
   }, []);
+
+  // ── Pointer event handlers on the piano container ──────────────────
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      e.preventDefault();
+      // Capture pointer on the container so we get move/up even outside
+      pianoRef.current?.setPointerCapture(e.pointerId);
+
+      const hit = getKeyAtPoint(e.clientX, e.clientY);
+      if (hit) {
+        activateNote(e.pointerId, hit.note, hit.freq, hit.element);
+      }
+    },
+    [getKeyAtPoint, activateNote],
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      // Only process if this pointer is active (button held)
+      if (e.buttons === 0) return;
+
+      const hit = getKeyAtPoint(e.clientX, e.clientY);
+      const currentNote = pointerNoteRef.current.get(e.pointerId);
+
+      if (hit && hit.note !== currentNote) {
+        // Finger slid to a new key — glissando!
+        deactivateNote(e.pointerId);
+        activateNote(e.pointerId, hit.note, hit.freq, hit.element);
+      } else if (!hit && currentNote) {
+        // Finger slid off all keys
+        deactivateNote(e.pointerId);
+      }
+    },
+    [getKeyAtPoint, activateNote, deactivateNote],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      deactivateNote(e.pointerId);
+      pianoRef.current?.releasePointerCapture(e.pointerId);
+    },
+    [deactivateNote],
+  );
+
+  const handlePointerCancel = useCallback(
+    (e: React.PointerEvent) => {
+      deactivateNote(e.pointerId);
+      pianoRef.current?.releasePointerCapture(e.pointerId);
+    },
+    [deactivateNote],
+  );
+
+  // When a context menu opens the pointerUp never fires, so release all notes
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      pointerNoteRef.current.forEach((_note, pointerId) => {
+        deactivateNote(pointerId);
+        pianoRef.current?.releasePointerCapture(pointerId);
+      });
+    },
+    [deactivateNote],
+  );
 
   // Stop all notes on unmount
   useEffect(() => {
@@ -247,6 +343,11 @@ export function PianoPage() {
           ref={pianoRef}
           className="relative flex-1 mx-1 my-1 select-none"
           style={{ touchAction: "none", direction: "ltr" }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+          onContextMenu={handleContextMenu}
         >
           {/* White keys */}
           <div className="flex h-full gap-[2px]">
@@ -255,10 +356,8 @@ export function PianoPage() {
               return (
                 <button
                   key={key.note}
-                  onPointerDown={(e) => handleKeyDown(key.note, key.freq, e)}
-                  onPointerUp={() => handleKeyUp(key.note)}
-                  onPointerLeave={() => handleKeyUp(key.note)}
-                  onPointerCancel={() => handleKeyUp(key.note)}
+                  data-note={key.note}
+                  data-freq={key.freq}
                   className={`
                     relative flex-1 rounded-b-xl border border-pink-100/80 transition-all duration-75
                     ${
@@ -285,10 +384,8 @@ export function PianoPage() {
             return (
               <button
                 key={key.note}
-                onPointerDown={(e) => handleKeyDown(key.note, key.freq, e)}
-                onPointerUp={() => handleKeyUp(key.note)}
-                onPointerLeave={() => handleKeyUp(key.note)}
-                onPointerCancel={() => handleKeyUp(key.note)}
+                data-note={key.note}
+                data-freq={key.freq}
                 className={`
                   absolute top-0 rounded-b-lg transition-all duration-75 z-10
                   ${
