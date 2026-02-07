@@ -1,6 +1,20 @@
 import type { Sticker, Task } from "../types";
 
-export const LEVEL_THRESHOLDS = [0, 100, 250, 450, 700, 1000, 1500, 2200];
+export const LEVEL_THRESHOLDS = [
+  0,
+  100,
+  250,
+  450,
+  700,
+  1000,
+  1500,
+  2200,
+  3000,
+  4000,
+  5200,
+  6600,
+  8200,
+];
 
 export const STICKERS: Sticker[] = [
   { level: 1, icon: "🦄", name: "פוני נוצץ" },
@@ -11,6 +25,11 @@ export const STICKERS: Sticker[] = [
   { level: 6, icon: "🧜‍♀️", name: "שירת הים" },
   { level: 7, icon: "🌈", name: "שביל הקשת" },
   { level: 8, icon: "🚀", name: "נוסעת בכוכבים" },
+  { level: 9, icon: "🦋", name: "כנפי הקסם" },
+  { level: 10, icon: "🧁", name: "עוגת חלומות" },
+  { level: 11, icon: "🪄", name: "שרביט המנגינה" },
+  { level: 12, icon: "🌟", name: "כוכבת זהב" },
+  { level: 13, icon: "🦄", name: "חד-קרן מלכותי" },
 ];
 
 export const DAILY_TASKS_DEFAULT: Task[] = [
